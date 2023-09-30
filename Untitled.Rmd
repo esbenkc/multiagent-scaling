@@ -1,0 +1,48 @@
+---
+title: "Multi-Agent Safety Hackathon"
+output: html_document
+date: "2023-09-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(tidyverse, ggplot2, lmerTest)
+```
+
+```{r}
+# Load data
+df <- read_csv("master_dataframe_2.csv")
+
+grouped_df <- df %>% 
+  group_by(Game) %>%
+  summarise(avg_contribution = mean(Contribution),
+            n_agents = first(n_agents),
+            n_rounds = first(n_rounds),
+            multiplier = first(multplier))
+
+grouped_df %>% 
+  ggplot() +
+  aes(x=n_agents, y=avg_contribution) %>% 
+  geom_boxplot(fill = "#45fe98", color = "black") +
+  facet_wrap(~multiplier, ncol=4) +
+  theme_minimal() +
+  coord_cartesian(expand=FALSE) +
+  labs(
+    y = "Average contribution",
+    x = "Number of agents"
+  )
+
+df %>% 
+  ggplot() +
+  aes(x=multplier, y=Contribution, fill=as.factor(multplier)) %>% 
+  geom_boxplot(color = "black") +
+  theme_minimal() +
+  coord_cartesian(expand=FALSE) +
+  labs(
+    y = "Contributions",
+    x = "High to low trust scenarios"
+  ) +
+  theme(legend.position = "none")
+
+```
+
